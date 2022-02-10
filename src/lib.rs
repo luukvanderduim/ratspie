@@ -85,11 +85,11 @@ pub async fn get_accessible_children(
 /// Returns a list of typed accessibility proxies
 pub async fn get_proxies<'a, T: zbus::ProxyDefault + From<zbus::Proxy<'a>>>(
     conn: &Connection,
-    list: &'a [(String, OwnedObjectPath)],
+    list: Vec<(String, OwnedObjectPath)>,
 ) -> zbus::Result<Vec<T>> {
     let mut res: Vec<T> = Vec::new();
-    for (name, path) in list.iter() {
-        let bus_name = zbus_names::BusName::try_from(&**name)?;
+    for (name, path) in list.into_iter() {
+        let bus_name = zbus_names::BusName::try_from(name)?;
         let pb: zbus::ProxyBuilder<'a, T> = zbus::ProxyBuilder::new(conn)
             .destination(bus_name)?
             // interface is taken from `T` associated  const
